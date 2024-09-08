@@ -37,7 +37,7 @@ const PostWidget = ({
       // Optimistically update the UI
       setIsLiked(!wasLiked);
   
-      const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
+      const response = await fetch(`https://connectwave-backend.onrender.com/posts/${postId}/like`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
