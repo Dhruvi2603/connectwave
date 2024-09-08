@@ -18,7 +18,7 @@ function App() {
     let socketConnection;
 
     if (user && !socket) {
-      socketConnection = io('http://localhost:3001', {
+      socketConnection = io('https://connectwave-backend.onrender.com', {
         query: {
           userId: user._id
         },
