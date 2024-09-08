@@ -12,7 +12,7 @@ const FriendListWidget = ({ userId }) => {
   const getFriends = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/users/${userId}/friends`,
+        `https://connectwave-backend.onrender.com/users/${userId}/friends`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
