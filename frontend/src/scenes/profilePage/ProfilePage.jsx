@@ -16,7 +16,7 @@ const ProfilePage = () => {
  const mode = useSelector((state) => state.mode);
  
  const getUser = async () => {
-  const response = await fetch(`http://localhost:3001/users/${userId}`, {
+  const response = await fetch(`https://connectwave-backend.onrender.com/users/${userId}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` }
   })
