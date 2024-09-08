@@ -19,7 +19,7 @@ const ChatPage = () => {
   const mode = useSelector((state) => state.mode);
 
   useEffect(() => {
-    const socket = io("http://localhost:3001");
+    const socket = io("https://connectwave-backend.onrender.com");
 
     // Listen for incoming messages
     socket.on('newMessage', (newMessage) => {
@@ -39,7 +39,7 @@ const ChatPage = () => {
       return; // Do not fetch details for the current user or invalid user ID
     }
     try {
-      const response = await axios.get(`http://localhost:3001/users/${userId}`, {
+      const response = await axios.get(`https://connectwave-backend.onrender.com/users/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
