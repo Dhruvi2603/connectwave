@@ -28,7 +28,7 @@ const MyPostWidget = ({ picturePath }) => {
     console.log("FormData content:", formData);
   
     try {
-      const response = await fetch(`http://localhost:3001/posts`, {
+      const response = await fetch(`https://connectwave-backend.onrender.com/posts`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
