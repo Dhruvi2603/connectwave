@@ -83,7 +83,7 @@ const PostWidget = ({
       <p className={` mt-4 ${mode === 'light' ? 'text-gray-800' : 'text-white'}`}>{description}</p>
       {picturePath && (
         <img
-          src={`http://localhost:3001/assets/${picturePath}`}
+          src={`https://connectwave-backend.onrender.com/assets/${picturePath}`}
           alt="post"
           className="w-full h-auto rounded-xl mt-3"
         />
