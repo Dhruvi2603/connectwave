@@ -105,7 +105,7 @@ export { io };
 
 
 // Mongoose setup
-const PORT = process.env.PORT || 6001;
+const PORT = process.env.PORT || 3001;
 const MONGO_URL = process.env.MONGO_URL;
 
 mongoose.connect(MONGO_URL)
