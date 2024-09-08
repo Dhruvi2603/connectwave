@@ -25,15 +25,15 @@ const server = http.createServer(app); // Create an HTTP server
 
 dotenv.config();
 
-// Configure CORS for Express
-const allowedOrigins = [
-    "http://localhost:5173", // Development
-    "https://connectwave-frontend.onrender.com" // Production
-];
+// Allowed origins for CORS
+const allowedOrigins = process.env.NODE_ENV === 'production' ? 
+    ["https://connectwave-frontend.onrender.com"] : 
+    ["http://localhost:5173"];
 
+// Configure CORS for Express
 app.use(cors({
     origin: (origin, callback) => {
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -47,7 +47,7 @@ app.use(cors({
 const io = new socketIo(server, {
     cors: {
         origin: (origin, callback) => {
-            if (allowedOrigins.indexOf(origin) !== -1) {
+            if (allowedOrigins.includes(origin)) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
@@ -70,7 +70,7 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 
-// File storage configuration
+// File storage configuration with validation
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "public/assets");
@@ -80,11 +80,35 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage });
+// File filter for allowed types and size limit
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error('Invalid file type'), false);
+        }
+        cb(null, true);
+    }
+});
 
 // Routes with files
-app.post("/auth/register", upload.single("picture"), register);
-app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/auth/register", upload.single("picture"), async (req, res) => {
+    try {
+        await register(req, res);
+    } catch (error) {
+        res.status(500).json({ message: "Registration failed", error });
+    }
+});
+
+app.post("/posts", verifyToken, upload.single("picture"), async (req, res) => {
+    try {
+        await createPost(req, res);
+    } catch (error) {
+        res.status(500).json({ message: "Post creation failed", error });
+    }
+});
 
 // Routes
 app.use("/auth", authRoutes);
@@ -92,18 +116,31 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/message", messageRoutes);
 
-const userSocketMap = {}
+// Socket.IO setup
+const userSocketMap = {};
 
 export const getRecieverSocketId = (recieverId) => userSocketMap[recieverId];
 
-// Socket.IO setup
 io.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
+    
     const userId = socket.handshake.query.userId;
     if (userId) {
         userSocketMap[userId] = socket.id;
         console.log(`User ID ${userId} connected with socket ID ${socket.id}`);
     }
+
+    // Handle message sending (example event)
+    socket.on("sendMessage", async ({ senderId, receiverId, message }) => {
+        const receiverSocketId = getRecieverSocketId(receiverId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("receiveMessage", { senderId, message });
+        }
+
+        // Save message in the database
+        const newMessage = new Message({ senderId, receiverId, message });
+        await newMessage.save();
+    });
 
     socket.on("disconnect", () => {
         console.log("Client disconnected:", socket.id);
@@ -114,15 +151,15 @@ io.on("connection", (socket) => {
     });
 });
 
-// Export io instance
-export { io };
-
 // Mongoose setup
 const PORT = process.env.PORT || 3001;
 const MONGO_URL = process.env.MONGO_URL;
 
-mongoose.connect(MONGO_URL)
+mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+        server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
     .catch((error) => console.log(`${error} did not connect`));
+
+// Export io instance
+export { io };
