@@ -64,7 +64,7 @@ const ChatPage = () => {
 
   const sendMessageHandler = async (receiverId) => {
     try {
-      const res = await axios.post(`http://localhost:3001/message/${receiverId}`, { textMessage }, {
+      const res = await axios.post(`https://connectwave-backend.onrender.com/message/${receiverId}`, { textMessage }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
