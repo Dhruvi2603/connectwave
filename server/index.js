@@ -23,18 +23,36 @@ import Message from "./models/Message.js";
 const app = express();
 const server = http.createServer(app); // Create an HTTP server
 
+dotenv.config();
+
 // Configure CORS for Express
+const allowedOrigins = [
+    "http://localhost:5173", // Development
+    "https://connectwave-frontend.onrender.com" // Production
+];
+
 app.use(cors({
-    origin: "http://localhost:5173", // Replace with your frontend origin
+    origin: (origin, callback) => {
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allow additional methods
     credentials: true // Allow credentials if needed
 }));
 
-
 // Configure Socket.IO with CORS options
 const io = new socketIo(server, {
     cors: {
-        origin: "http://localhost:5173", // Replace with your frontend origin
+        origin: (origin, callback) => {
+            if (allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         methods: ["GET", "POST"],
         credentials: true // Allow credentials if needed
     },
@@ -42,7 +60,6 @@ const io = new socketIo(server, {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config();
 
 // Middleware
 app.use(express.json());
@@ -84,25 +101,21 @@ io.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
     const userId = socket.handshake.query.userId;
     if (userId) {
-      userSocketMap[userId] = socket.id;
-      console.log(`User ID ${userId} connected with socket ID ${socket.id}`);
+        userSocketMap[userId] = socket.id;
+        console.log(`User ID ${userId} connected with socket ID ${socket.id}`);
     }
-  
+
     socket.on("disconnect", () => {
-      console.log("Client disconnected:", socket.id);
-      if (userId) {
-        delete userSocketMap[userId];
-        console.log(`User ID ${userId} disconnected`);
-      }
+        console.log("Client disconnected:", socket.id);
+        if (userId) {
+            delete userSocketMap[userId];
+            console.log(`User ID ${userId} disconnected`);
+        }
     });
-  });
-  
-
-
+});
 
 // Export io instance
 export { io };
-
 
 // Mongoose setup
 const PORT = process.env.PORT || 3001;
@@ -113,4 +126,3 @@ mongoose.connect(MONGO_URL)
         server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
     })
     .catch((error) => console.log(`${error} did not connect`));
-
