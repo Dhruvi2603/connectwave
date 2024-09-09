@@ -62,16 +62,36 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(express.json());
-app.use(helmet());
+app.use(helmet());  // Helmet for security headers
+
+// Content Security Policy
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        frameAncestors: ["'none'"],  // Prevent framing for security
+        scriptSrc: ["'self'", "'unsafe-inline'"],  // Adjust as needed
+        styleSrc: ["'self'", "'unsafe-inline'"],  // Adjust as needed
+    }
+}));
+
+// Setting X-Frame-Options as a fallback for older browsers
+app.use((req, res, next) => {
+    res.setHeader('X-Frame-Options', 'DENY');
+    next();
+});
+
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
-// Serve static files, including fonts, with correct MIME types
+// Serve static files, including fonts, with Cache-Control headers and correct MIME types
 app.use("/assets", express.static(path.join(__dirname, 'public/assets'), {
     setHeaders: (res, filePath) => {
         const ext = path.extname(filePath);
+        if (['.woff', '.woff2', '.jpg', '.png', '.js', '.css'].includes(ext)) {
+            res.setHeader('Cache-Control', 'max-age=31536000, immutable');  // Cache static assets for 1 year
+        }
         if (ext === '.woff2') {
             res.setHeader('Content-Type', 'font/woff2');
         } else if (ext === '.woff') {
