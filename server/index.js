@@ -14,23 +14,22 @@ import { createPost } from "./controllers/posts.js";
 import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
 import { verifyToken } from "./middleware/auth.js";
-import messageRoutes from './routes/message.js';
+import messageRoutes from "./routes/message.js";
 import http from "http";
 import { Server as socketIo } from "socket.io";
 import Message from "./models/Message.js";
 
 // Configurations
+dotenv.config();
 const app = express();
 const server = http.createServer(app); // Create an HTTP server
 
-dotenv.config();
+// Determine allowed origins based on the environment
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? ["https://connectwave-frontend.onrender.com"] 
+    : ["http://localhost:5173"];
 
-// Allowed origins for CORS
-const allowedOrigins = process.env.NODE_ENV === 'production' ? 
-    ["https://connectwave-frontend.onrender.com"] : 
-    ["http://localhost:5173"];
-
-// Configure CORS for Express
+// CORS Configuration
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -40,10 +39,10 @@ app.use(cors({
         }
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allow additional methods
-    credentials: true // Allow credentials if needed
+    credentials: true
 }));
 
-// Configure Socket.IO with CORS options
+// Socket.IO setup with CORS
 const io = new socketIo(server, {
     cors: {
         origin: (origin, callback) => {
@@ -54,7 +53,7 @@ const io = new socketIo(server, {
             }
         },
         methods: ["GET", "POST"],
-        credentials: true // Allow credentials if needed
+        credentials: true
     },
 });
 
@@ -68,7 +67,18 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
+
+// Serve static files, including fonts, with correct MIME types
+app.use("/assets", express.static(path.join(__dirname, 'public/assets'), {
+    setHeaders: (res, filePath) => {
+        const ext = path.extname(filePath);
+        if (ext === '.woff2') {
+            res.setHeader('Content-Type', 'font/woff2');
+        } else if (ext === '.woff') {
+            res.setHeader('Content-Type', 'font/woff');
+        }
+    }
+}));
 
 // File storage configuration with validation
 const storage = multer.diskStorage({
@@ -93,7 +103,7 @@ const upload = multer({
     }
 });
 
-// Routes with files
+// Routes with file uploads
 app.post("/auth/register", upload.single("picture"), async (req, res) => {
     try {
         await register(req, res);
@@ -110,16 +120,16 @@ app.post("/posts", verifyToken, upload.single("picture"), async (req, res) => {
     }
 });
 
-// Routes
+// General Routes
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/message", messageRoutes);
 
-// Socket.IO setup
+// Socket.IO setup for real-time messaging
 const userSocketMap = {};
 
-export const getRecieverSocketId = (recieverId) => userSocketMap[recieverId];
+export const getRecieverSocketId = (receiverId) => userSocketMap[receiverId];
 
 io.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
@@ -130,7 +140,7 @@ io.on("connection", (socket) => {
         console.log(`User ID ${userId} connected with socket ID ${socket.id}`);
     }
 
-    // Handle message sending (example event)
+    // Handle message sending
     socket.on("sendMessage", async ({ senderId, receiverId, message }) => {
         const receiverSocketId = getRecieverSocketId(receiverId);
         if (receiverSocketId) {
@@ -142,6 +152,7 @@ io.on("connection", (socket) => {
         await newMessage.save();
     });
 
+    // Handle disconnection
     socket.on("disconnect", () => {
         console.log("Client disconnected:", socket.id);
         if (userId) {
