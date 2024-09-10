@@ -9,12 +9,15 @@ const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
+   const [isSubmitting, setIsSubmitting] = useState(false);
   const [post, setPost] = useState("");
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const mode = useSelector((state) => state.mode);
 
   const handlePost = async () => {
+     if (isSubmitting) return; 
+    setIsSubmitting(true);
     console.log("Post function called");
     
     const formData = new FormData();
@@ -44,6 +47,8 @@ const MyPostWidget = ({ picturePath }) => {
       setPost("");
     } catch (error) {
       console.error("Error posting:", error);
+    }finally {
+      setIsSubmitting(false); // Reset loading state after submission
     }
   };
   
@@ -126,7 +131,7 @@ const MyPostWidget = ({ picturePath }) => {
           <i>{threeDot}</i>
         </div>
 
-        <button disabled={!post} onClick={handlePost} className="bg-gradient-to-r from-purple-500 to bg-pink-500 text-white rounded-2xl px-3 py-2 hover:cursor-pointer" >POST</button>
+        <button disabled={!post} onClick={handlePost} className="bg-gradient-to-r from-purple-500 to bg-pink-500 text-white rounded-2xl px-3 py-2 hover:cursor-pointer" >{isSubmitting ? "Posting..." : "POST"}</button>
 
       </div>
     </div>
