@@ -45,6 +45,7 @@ const initialValuesLogin = {
 
 const Form = () => {
   const [pageType, setPageType] = useState("login");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLogin = pageType === "login";
@@ -67,6 +68,7 @@ const Form = () => {
     );
     const savedUser = await savedUserResponse.json();
     onSubmitProps.resetForm();
+    setIsSubmitting(false);
 
     if (savedUser) {
       setPageType("login");
@@ -74,6 +76,7 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
+    setIsSubmitting(true);
     const loggedInResponse = await fetch("https://connectwave-backend.onrender.com/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -81,6 +84,7 @@ const Form = () => {
     });
     const loggedIn = await loggedInResponse.json();
     onSubmitProps.resetForm();
+    setIsSubmitting(false);
 
     if (loggedIn) {
       dispatch(
@@ -266,8 +270,9 @@ const Form = () => {
               <button
                 type="submit"
                 className="md:mx-[18%] mx-[14%] mb-8 mt-6 md:w-8/12 w-[72%] py-2 md:text-xl text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-500 hover:text-black"
+                 disabled={isSubmitting}
               >
-                {isLogin ? "Login" : "Register"}
+                {isSubmitting ? (isLogin ? "Logging in..." : "Registering...") : isLogin ? "Login" : "Register"}
               </button>
               <br />
 
