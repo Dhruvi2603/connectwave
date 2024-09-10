@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import state, { setFriends } from '../../state'
 import UserImage from '../useImage/UserImage'
@@ -14,11 +14,14 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const mode = useSelector((state) => state.mode);
   const friends = useSelector((state) => state.user?.friends || []);
 
+   const [isProcessing, setIsProcessing] = useState(false);
+
   
   const isFriend = Array.isArray(friends) && friends.find((friend) => friend._id === friendId);
 
 
   const patchFriend = async () => {
+    setIsProcessing(true);
     const response = await fetch(`https://connectwave-backend.onrender.com/users/${_id}/${friendId}`, {
       method: "PATCH",
       headers: {
@@ -28,6 +31,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     });
     const data = await response.json();
     dispatch(setFriends({ friends: data }));
+    setIsProcessing(false);
   };
 
   return (
@@ -42,7 +46,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           <p className='text-xs'>{subtitle}</p>
         </div>
       </div>
-      <div onClick={() => patchFriend()} className={`rounded-full p-3 hover:cursor-pointer ${mode === 'light' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'}`}>
+      <div onClick={!isProcessing ? patchFriend : null} className={`rounded-full p-3 hover:cursor-pointer ${mode === 'light' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'}`} style={{ pointerEvents: isProcessing ? 'none' : 'auto' }}>
         {isFriend ? (
           <i>{removeuser}</i>
         ) : ( <i>{adduser}</i> )}
