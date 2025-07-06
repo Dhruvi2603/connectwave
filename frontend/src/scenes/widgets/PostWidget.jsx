@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import state, { setMode, setPost } from "../../state";
+import state, { setMode, setPost } from "../../state/authSlice";
 
 import { comment, like, liked, share } from "../../icons/icon";
 import Friend from "../../components/friend/Friend";
@@ -17,9 +17,10 @@ const PostWidget = ({
   comments = [],
 }) => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const mode = useSelector((state) => state.mode);
-  const loggedInUserId = useSelector((state) => state.user._id);
+  const token = useSelector((state) => state.auth.token);
+  const mode = useSelector((state) => state.auth.mode);
+  const loggedInUserId = useSelector((state) => state.auth.user?._id);
+
 
   const [isComments, setIsComments] = useState(false);
   const [isLiked, setIsLiked] = useState(Boolean(likes[loggedInUserId]));

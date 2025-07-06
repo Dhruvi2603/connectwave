@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage } from "../state";
+import { addMessage } from "../state/authSlice";
 
 const useGetRealTimeMessage = () => {
     const dispatch = useDispatch();
-    const socket = useSelector((state) => state.socket);
+    const socket = useSelector((state) => state.socketio);
+
 
     useEffect(() => {
         if (!socket) return;

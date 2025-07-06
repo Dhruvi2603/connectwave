@@ -10,8 +10,8 @@ import state from '../../state';
 
 const HomePage = () => {
 
-  const { _id, picturePath } = useSelector((state) => state.user);
-  const mode = useSelector((state) => state.mode);
+  const { _id, picturePath } = useSelector((state) => state.auth.user || {});
+  const mode = useSelector((state) => state.auth.mode);
 
   return (
     <div className={`${mode === 'light' ? 'bg-gray-200' : 'bg-gray-800'}`}>

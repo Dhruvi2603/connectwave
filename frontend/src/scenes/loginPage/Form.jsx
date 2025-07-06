@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Dropzone from "react-dropzone";
-import { setLogin } from "../../state";
+import { setLogin } from "../../state/authSlice";
 import { edit } from "../../icons/icon";
 
 const registerSchema = yup.object().shape({

@@ -1,15 +1,16 @@
 // FriendsChatWidget.jsx
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "../../state";
+import { setFriends } from "../../state/authSlice";
 import FriendChat from "../../components/friendchat/FriendChat";
 
 
 const FriendsChatWidget = ({ userId, onSelectFriend }) => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const mode = useSelector((state) => state.mode);
-  const friends = useSelector((state) => state.user.friends) || [];
+  const token = useSelector((state) => state.auth.token);
+  const mode = useSelector((state) => state.auth.mode);
+  const friends = useSelector((state) => state.auth.user?.friends) || [];
+
 
   const getFriends = async () => {
     try {

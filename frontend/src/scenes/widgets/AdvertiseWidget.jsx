@@ -6,7 +6,7 @@ import state from '../../state'
 
 
 const AdvertiseWidget = () => {
-   const mode = useSelector((state) => state.mode);
+  const mode = useSelector((state) => state.auth.mode);
 
   return (
     <div className={`p-6 pb-3.5 rounded-lg mx-0 ${mode === 'light' ? 'bg-white' : 'bg-slate-700 text-white'}`}>

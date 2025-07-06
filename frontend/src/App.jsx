@@ -1,42 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import ProfilePage from "./scenes/profilePage/ProfilePage";
 import HomePage from "./scenes/homePage/HomePage";
 import LoginPage from "./scenes/loginPage/LoginPage";
-import { useDispatch, useSelector } from "react-redux";
 import ChatPage from "./scenes/chatPage/ChatPage";
-import { setSocket } from "./state";
+import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 
 function App() {
-  const user = useSelector((state) => state.user);
-  const socket = useSelector((state) => state.socketio);
-  const isAuth = Boolean(useSelector((state) => state.token));
   const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
+  const isAuth = Boolean(token);
+  const socketRef = useRef(null); // ✅ Local reference, not in Redux
 
   useEffect(() => {
-    let socketConnection;
-
-    if (user && !socket) {
-      socketConnection = io('http://localhost:3001', {
+    if (user && !socketRef.current) {
+      const socketConnection = io("http://localhost:3001", {
         query: {
-          userId: user._id
+          userId: user._id,
         },
-        transports: ['websocket']
+        transports: ["websocket"],
       });
 
-      dispatch(setSocket(socketConnection));
-      
-      // Event listeners (if any) can be set up here
+      socketRef.current = socketConnection;
+
+      // You can add socket event listeners here if needed
     }
 
     return () => {
-      if (socketConnection) {
-        socketConnection.close();
-        dispatch(setSocket(null));
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
       }
     };
-  }, [user, socket]);
+  }, [user]);
 
   return (
     <BrowserRouter>

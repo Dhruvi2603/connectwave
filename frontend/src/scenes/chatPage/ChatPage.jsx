@@ -4,19 +4,22 @@ import axios from "axios";
 import { io } from "socket.io-client"; // Import socket.io-client
 import Navbar from "../../scenes/navbar/Navbar";
 import FriendsChatWidget from "../../scenes/widgets/FriendsChatWidget";
-import { addMessage, setMessages, setSelectedUser } from "../../state";
+import { addMessage, setMessages, setSelectedUser } from "../../state/authSlice";
 import UserImage from "../../components/useImage/UserImage";
 import { chat } from "../../icons/icon";
 import Messages from "../../components/messages/Messages";
 
 const ChatPage = () => {
-  const userId = useSelector((state) => state.user._id);
+  
   const dispatch = useDispatch();
-  const selectedUser = useSelector((state) => state.selectedUser);
+  const userId = useSelector((state) => state.auth.user?._id);
+  const selectedUser = useSelector((state) => state.auth.selectedUser);
+  const messages = useSelector((state) => state.auth.messages || []);
+  const token = useSelector((state) => state.auth.token);
+  const mode = useSelector((state) => state.auth.mode);
   const [textMessage, setTextMessage] = useState("");
-  const messages = useSelector((state) => state.messages || []);
-  const token = useSelector((state) => state.token);
-  const mode = useSelector((state) => state.mode);
+
+
 
   useEffect(() => {
     const socket = io("http://localhost:3001");

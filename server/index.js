@@ -108,9 +108,12 @@ export { io };
 const PORT = process.env.PORT || 6001;
 const MONGO_URL = process.env.MONGO_URL;
 
-mongoose.connect(MONGO_URL)
-    .then(() => {
-        server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-    })
-    .catch((error) => console.log(`${error} did not connect`));
-
+mongoose.connect(MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  family: 4, 
+})
+  .then(() => {
+    server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+  })
+  .catch((error) => console.log(`${error} did not connect`));

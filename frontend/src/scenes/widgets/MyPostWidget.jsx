@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import UserImage from "../../components/useImage/UserImage";
 import { useDispatch, useSelector } from "react-redux";
-import state, { setPosts } from "../../state";
+import state, { setPosts } from "../../state/authSlice";
 import { attatchment, audio, clipIcon, deleteIcon, edit, imageIcon, threeDot } from "../../icons/icon";
 
 const MyPostWidget = ({ picturePath }) => {
@@ -10,9 +10,9 @@ const MyPostWidget = ({ picturePath }) => {
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
-  const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const mode = useSelector((state) => state.mode);
+  const { _id } = useSelector((state) => state.auth.user || {});
+  const token = useSelector((state) => state.auth.token);
+  const mode = useSelector((state) => state.auth.mode);
 
   const handlePost = async () => {
     console.log("Post function called");

@@ -8,9 +8,10 @@ import useGetRealTimeMessage from "../../hooks/useGetRealTimeMessage";
 const Messages = ({ selectedUser }) => {
   useGetAllMessage();
   useGetRealTimeMessage();
-  const messages = useSelector((state) => state.messages) || [];
-  const user = useSelector((state) => state.user) || {};
-  const mode = useSelector((state) => state.mode);
+  const messages = useSelector((state) => state.auth.messages) || [];
+  const user = useSelector((state) => state.auth.user) || {};
+  const mode = useSelector((state) => state.auth.mode);
+
   
   useEffect(() => {
     console.log(messages);

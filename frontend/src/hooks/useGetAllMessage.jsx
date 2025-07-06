@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setMessages, setError } from "../state";
+import { setMessages, setError } from "../state/authSlice";
 
 const useGetAllMessage = () => {
   const dispatch = useDispatch();
-  const selectedUser = useSelector((state) => state.selectedUser);
-  const token = useSelector((state) => state.token);
+  const selectedUser = useSelector((state) => state.auth.selectedUser);
+  const token = useSelector((state) => state.auth.token);
+
 
   useEffect(() => {
     if (!selectedUser?._id || !token) {

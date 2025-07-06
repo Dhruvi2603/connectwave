@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import state, { setFriends } from "../../state";
+import state, { setFriends } from "../../state/authSlice";
 import Friend from "../../components/friend/Friend";
 
 const FriendListWidget = ({ userId }) => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const mode = useSelector((state) => state.mode);
-  const friends = useSelector((state) => state.user.friends) || [];
+  const token = useSelector((state) => state.auth.token);
+  const mode = useSelector((state) => state.auth.mode);
+  const friends = useSelector((state) => state.auth.user?.friends) || [];
+
 
   const getFriends = async () => {
     try {

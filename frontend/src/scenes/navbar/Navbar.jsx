@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { setMode, setLogout } from '../../state/index';
+import { setMode, setLogout } from '../../state/authSlice';
 import {
   search, light, chat, notification, question, downarrow, squaredropdown, dark
 } from '../../icons/icon';
@@ -10,8 +10,9 @@ const Navbar = ({ conversationId }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const dispatch = useDispatch();
-  const mode = useSelector((state) => state.mode);
-  const user = useSelector((state) => state.user);
+  const mode = useSelector((state) => state.auth.mode);
+  const user = useSelector((state) => state.auth.user);
+
   const location = useLocation();
   const navigate = useNavigate();
 

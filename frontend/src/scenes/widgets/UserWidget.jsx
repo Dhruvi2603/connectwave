@@ -9,8 +9,9 @@ import state from "../../state";
 const UserWidget = ({ userId, picturePath }) => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const token = useSelector((state) => state.token);
-    const mode = useSelector((state) => state.mode);
+    const token = useSelector((state) => state.auth.token);
+    const mode = useSelector((state) => state.auth.mode);
+    
    
     const getUser = async () => {
         const response = await fetch(`http://localhost:3001/users/${userId}`,

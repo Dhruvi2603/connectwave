@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types'; // Import PropTypes
 import { useDispatch, useSelector } from 'react-redux';
-import { setFriends } from '../../state';
+import { setFriends } from '../../state/authSlice';
 import UserImage from '../useImage/UserImage';
 import { useNavigate } from 'react-router-dom';
 import { adduser, removeuser } from '../../icons/icon';
@@ -9,10 +9,11 @@ import { adduser, removeuser } from '../../icons/icon';
 const FriendChat = ({ friendId, name, subtitle, userPicturePath, onClick }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const mode = useSelector((state) => state.mode);
-  const friends = useSelector((state) => state.user?.friends || []);
+  const { _id } = useSelector((state) => state.auth.user || {});
+  const token = useSelector((state) => state.auth.token);
+  const mode = useSelector((state) => state.auth.mode);
+  const friends = useSelector((state) => state.auth.user?.friends || []);
+
 
   const isFriend = Array.isArray(friends) && friends.find((friend) => friend._id === friendId);
 
