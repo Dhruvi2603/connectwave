@@ -19,7 +19,7 @@ const useGetAllMessage = () => {
     const fetchAllMessage = async () => {
       try {
         const res = await axios.get(
-          `http://connectwave-backend.onrender.com/message/${selectedUser._id}`,
+          `https://connectwave-backend.onrender.com/message/${selectedUser._id}`,
           {
             withCredentials: true,
             headers: {
