@@ -30,11 +30,11 @@ const Messages = ({ selectedUser }) => {
             <UserImage image={selectedUser.picturePath} />
           </div>
           <span className={`font-medium ${mode === 'light' ? 'text-black' : 'text-white'}`}>{`${selectedUser.firstName} ${selectedUser.lastName}`}</span>
-          <Link to={`/profile/${selectedUser._id}`}>
+{/*           <Link to={`/profile/${selectedUser._id}`}>
             <button className="mt-1 rounded-xl px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
               View profile
             </button>
-          </Link>
+          </Link> */}
         </div>
       </div>
       <div className="flex flex-col gap-3 mt-4">
