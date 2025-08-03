@@ -16,7 +16,7 @@ function App() {
 
   useEffect(() => {
     if (user && !socketRef.current) {
-      const socketConnection = io("http://connectwave-backend.onrender.com", {
+      const socketConnection = io("https://connectwave-backend.onrender.com", {
         query: {
           userId: user._id,
         },
