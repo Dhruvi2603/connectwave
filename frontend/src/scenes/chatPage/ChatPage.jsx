@@ -22,7 +22,7 @@ const ChatPage = () => {
 
 
   useEffect(() => {
-    const socket = io("http://localhost:3001");
+    const socket = io("https://connectwave-backend.onrender.com");
 
     // Listen for incoming messages
     socket.on('newMessage', (newMessage) => {
@@ -42,7 +42,7 @@ const ChatPage = () => {
       return; // Do not fetch details for the current user or invalid user ID
     }
     try {
-      const response = await axios.get(`http://connectwave-backend.onrender.com/users/${userId}`, {
+      const response = await axios.get(`https://connectwave-backend.onrender.com/users/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -67,7 +67,7 @@ const ChatPage = () => {
 
   const sendMessageHandler = async (receiverId) => {
     try {
-      const res = await axios.post(`http://connectwave-backend.onrender.com/message/${receiverId}`, { textMessage }, {
+      const res = await axios.post(`https://connectwave-backend.onrender.com/message/${receiverId}`, { textMessage }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
