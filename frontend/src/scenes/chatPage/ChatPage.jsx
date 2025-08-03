@@ -42,7 +42,7 @@ const ChatPage = () => {
       return; // Do not fetch details for the current user or invalid user ID
     }
     try {
-      const response = await axios.get(`http://localhost:3001/users/${userId}`, {
+      const response = await axios.get(`http://connectwave-backend.onrender.com/users/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -67,7 +67,7 @@ const ChatPage = () => {
 
   const sendMessageHandler = async (receiverId) => {
     try {
-      const res = await axios.post(`http://localhost:3001/message/${receiverId}`, { textMessage }, {
+      const res = await axios.post(`http://connectwave-backend.onrender.com/message/${receiverId}`, { textMessage }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
