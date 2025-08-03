@@ -25,20 +25,28 @@ const server = http.createServer(app); // Create an HTTP server
 
 // Configure CORS for Express
 app.use(cors({
-    origin: "http://localhost:5173", // Replace with your frontend origin
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allow additional methods
-    credentials: true // Allow credentials if needed
+    origin: [
+        "http://localhost:5173",
+        "https://connectwave-frontend.onrender.com"
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true
 }));
+
 
 
 // Configure Socket.IO with CORS options
 const io = new socketIo(server, {
     cors: {
-        origin: "http://localhost:5173", // Replace with your frontend origin
+        origin: [
+            "http://localhost:5173",
+            "https://connectwave-frontend.onrender.com"
+        ],
         methods: ["GET", "POST"],
-        credentials: true // Allow credentials if needed
+        credentials: true
     },
 });
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
