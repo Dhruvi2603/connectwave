@@ -15,7 +15,7 @@ const FriendsChatWidget = ({ userId, onSelectFriend }) => {
   const getFriends = async () => {
     try {
       const response = await fetch(
-        `http://connectwave-backend.onrender.com/users/${userId}/friends`,
+        `https://connectwave-backend.onrender.com/users/${userId}/friends`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
