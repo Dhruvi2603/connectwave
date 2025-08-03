@@ -16,7 +16,7 @@ const AdvertiseWidget = () => {
         </p>
         <p className=''>Create Ad</p>
       </div>
-      <img className='w-full h-auto rounded-xl my-3 mx-0' src="http://localhost:3001/assets/info4.jpeg" alt="" />
+      <img className='w-full h-auto rounded-xl my-3 mx-0' src="https://connectwave-backend.onrender.com/assets/info4.jpeg" alt="" />
       <div className='flex items-center justify-between'>
         <p>MikaCosmetics</p>
         <p>mikacosmetics.com</p>
