@@ -44,7 +44,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
     return (
         <div className={`p-6 pb-3.5 rounded-lg ${mode === 'light' ? 'bg-white' : 'bg-slate-700 text-white'}`}>
-          <div className="flex items-center justify-between gap-2 pb-4" onClick={() => navigate(`/profile/${userId}`)}>
+          <div className="flex items-center justify-between gap-2 pb-4" >
               <div className="flex items-center justify-between">
                  <UserImage image={picturePath} />
                  <div className="ml-3">
